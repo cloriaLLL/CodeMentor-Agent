@@ -1,0 +1,21 @@
+你是一位编程教育专家，请根据知识点生成一道模块级综合项目题。
+
+知识点：{knowledge_point}
+难度：{difficulty}
+编程语言：{language}
+
+要求：
+1. 项目需求描述一个真实场景（如"实现一个LRU缓存类"）
+2. 验收标准清晰可量化
+3. 评价维度包括：功能正确性、代码结构、边界处理、代码质量
+4. 测试用例覆盖核心功能和边界情况
+
+严格输出以下JSON格式（不要包裹在markdown代码块中）：
+{{
+  "question": "项目需求描述（Markdown）",
+  "starter_code": "项目起始代码骨架",
+  "reference_solution": "参考实现{language}代码",
+  "test_cases": "{language}测试用例代码",
+  "acceptance_criteria": ["验收标准1", "验收标准2", ...],
+  "evaluation_dimensions": ["功能正确性", "代码结构", "边界处理", "代码质量"]
+}}

@@ -1,0 +1,25 @@
+你是一位编程教育专家，请根据知识点生成一道{subtype_desc}题目。
+
+知识点：{knowledge_point}
+难度：{difficulty}
+编程语言：{language}
+
+要求：
+1. 题目必须考察对核心概念的理解，不能是纯记忆题
+2. 干扰项（选择题）要有迷惑性，不能太明显，每个错误选项对应一个常见误区
+3. 解析要清楚说明为什么正确答案对、其他每个选项分别为什么错
+4. correct_answer 必须是选项字母（A/B/C/D），且必须与 options 中对应选项一致
+5. explanation 必须详细（至少 80 字），不能是简单的复述
+
+严格输出以下JSON格式（不要包裹在markdown代码块中）：
+{{
+  "question": "题目内容",
+  "options": ["选项A内容", "选项B内容", "选项C内容", "选项D内容"],
+  "correct_answer": "A",
+  "explanation": "详细解析，说明正确答案为什么对，以及每个错误选项为什么错"
+}}
+
+注意：
+- 判断题 options 为 ["正确", "错误"]，correct_answer 为 "正确" 或 "错误"
+- 填空题 options 为 null，correct_answer 为填空答案文本
+- 所有字段都必须填写，尤其是 correct_answer 和 explanation 不能为空

@@ -1,0 +1,59 @@
+{
+  "knowledge_atoms": [
+    {
+      "node_id": "python.advanced.decorator",
+      "language": "python",
+      "title": "Python 装饰器与高阶函数",
+      "category": "advanced",
+      "prerequisites": ["python.basics.closure", "python.basics.function"],
+      "grounding_doc": {
+        "source_name": "PEP 318 -- Decorators for Functions and Methods",
+        "url_or_pep": "https://peps.python.org/pep-0318/",
+        "raw_text": "PEP 318 摘录：本 PEP 引入装饰器语法的动机源于 classmethod 与 staticmethod 的使用体验：当前将方法定义后再次通过赋值转换的方式（如 foo = classmethod(foo)）打断了方法的视觉线性表达，尤其在方法体较长时让转换逻辑淹没在源文件末尾。借鉴 Java 的 Vtable 注解与 .NET attribute 语法，Python 选择 @decorator 前缀语法以将转换逻辑前置到 def 之前，使其在视觉上与函数定义形成清晰关联。"
+      },
+      "evolution_history": {
+        "introduced_version": "Python 2.4",
+        "key_changes": "Python 2.4 正式引入 @ 语法糖，将函数转换逻辑从 def 末尾移至 def 之前；Python 3.0 引入函数注解（PEP 3107），为装饰器提供了元数据载体；Python 3.2 增加 functools.lru_cache 标准库装饰器；Python 3.4 标准化 singledispatch；Python 3.9 增强类装饰器与泛型支持；Python 3.10+ 引入 ParamSpec（PEP 612）改进装饰器类型标注，使 *args, **kwargs 的类型信息能被装饰器正确传递。",
+        "deprecated_features": "无显著废弃特性；functools.wraps 自 3.2 起被推荐为装饰器标准实践"
+      },
+      "ecosystem_mapping": {
+        "primary_stack": "FastAPI + Redis",
+        "industrial_use_case": "路由中间件、限流器、缓存装饰、依赖注入",
+        "stack_summary": "在 FastAPI + Redis 架构中，装饰器常作为路由中间件与限流器使用。FastAPI 的 Depends() 依赖注入机制本质上就是装饰器模式的应用——通过在路由签名上声明依赖，框架在调用前自动注入解析后的对象；Redis 配合装饰器可实现分布式限流（如 slowapi 框架基于装饰器 + Redis 计数器实现滑动窗口限流）；@app.middleware 装饰器将函数注册到 ASGI 中间件链，是请求/响应切面处理的标准入口；缓存装饰器（@cached）配合 Redis 可实现方法级结果缓存，避免重复计算。装饰器模式是 FastAPI 生态中「声明式编程」风格的基石。",
+        "cross_language_equivalents": {
+          "Go": "Gin 框架 Middleware (HandlerFunc 链)",
+          "Java": "Spring AOP (@Aspect 注解 + 切面织入)",
+          "JavaScript": "Express Middleware (next() 链 + 高阶函数)"
+        },
+        "next_node_recommendation": "python.advanced.asyncio"
+      },
+      "teach_content": {
+        "markdown_content": "# Python 装饰器与高阶函数\n\n## 1. 核心概念定义\n\n**装饰器（Decorator）** 是 Python 中一种以「高阶函数」机制实现「函数变换」的语法糖。其本质是：接收一个函数作为输入，返回一个新函数作为输出，在不修改原函数源代码的前提下，为其附加额外行为（如日志、缓存、限流、鉴权）。\n\n```python\n@decorator\ndef func():\n    ...\n```\n\n上述语法等价于：\n```python\ndef func():\n    ...\nfunc = decorator(func)\n```\n\n## 2. 历史演进脉络\n\n装饰器语法于 **Python 2.4** 通过 [PEP 318](https://peps.python.org/pep-0318/) 正式引入。其设计动机源于 `classmethod` / `staticmethod` 的使用体验问题：传统写法 `foo = classmethod(foo)` 将转换逻辑置于 `def` 末尾，破坏了代码的视觉线性。`@decorator` 前缀语法将转换逻辑前置，使「定义即声明」的意图更清晰。\n\n关键演进节点：\n- **Python 2.4**：引入 `@decorator` 语法糖\n- **Python 3.2**：标准库新增 `functools.lru_cache`，装饰器成为缓存标准实践\n- **Python 3.4**：标准化 `functools.singledispatch`，支持基于第一个参数类型的分派\n- **Python 3.9**：增强类装饰器与泛型支持\n- **Python 3.10+**：[PEP 612](https://peps.python.org/pep-0612/) 引入 `ParamSpec`，使装饰器能正确传递 `*args, **kwargs` 的类型信息\n\n## 3. 高阶函数：装饰器的底层机制\n\n装饰器依赖 Python 函数作为「一等公民」的特性：函数可作为参数传递、作为返回值、可被赋值给变量。这是「高阶函数」的核心定义。\n\n```python\ndef shout(func):\n    def wrapper(*args, **kwargs):\n        result = func(*args, **kwargs)\n        return result.upper()\n    return wrapper\n\n@shout\ndef greet(name):\n    return f\"hello, {name}\"\n\ngreet('world')  # => 'HELLO, WORLD'\n```\n\n## 4. functools.wraps：保留元信息的标准实践\n\n装饰器返回的 `wrapper` 函数会覆盖原函数的 `__name__`、`__doc__` 等元信息。`functools.wraps` 通过将这些元信息复制到 `wrapper`，避免调试与反射失效。\n\n```python\nfrom functools import wraps\n\ndef my_decorator(func):\n    @wraps(func)\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs)\n    return wrapper\n```\n\n## 5. 带参数的装饰器\n\n带参数的装饰器需要「三层嵌套」：最外层接收参数，返回真正的装饰器；中间层接收被装饰函数；最内层是 wrapper。\n\n```python\ndef repeat(times: int):\n    def decorator(func):\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            for _ in range(times):\n                result = func(*args, **kwargs)\n            return result\n        return wrapper\n    return decorator\n\n@repeat(3)\ndef say_hi():\n    print('hi')\n```\n\n## 6. 工业最小示例：限流装饰器\n\n限流是装饰器在工业场景中最典型的应用之一。下面的 `@rate_limit(max_calls, period)` 在 `period` 秒窗口内允许最多 `max_calls` 次调用，超出则抛出 `RuntimeError`。\n\n```python\nimport time\nfrom functools import wraps\n\ndef rate_limit(max_calls: int, period: int):\n    def decorator(func):\n        calls: list[float] = []\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            now = time.time()\n            calls[:] = [t for t in calls if now - t < period]\n            if len(calls) >= max_calls:\n                raise RuntimeError('Rate limit exceeded')\n            calls.append(now)\n            return func(*args, **kwargs)\n        return wrapper\n    return decorator\n```\n\n这个模式正是 FastAPI + Redis 生态中 `slowapi` 限流框架的核心抽象——将「限流策略」从「业务逻辑」中解耦，通过声明式装饰器表达横切关注点。\n\n## 7. 下一步\n\n- 进入实战：实现 `@rate_limit` 限流装饰器（Mini-Project）\n- 探索更多示例：类装饰器、`lru_cache`、`singledispatch`",
+        "next_actions": ["go_to_practice", "more_examples"]
+      }
+    }
+  ],
+  "seed_problems": [
+    {
+      "seed_id": "seed_decorator_rate_limit",
+      "associated_node_id": "python.advanced.decorator",
+      "difficulty": "Medium",
+      "source_repository": "internal",
+      "problem_statement": "请实现带参数的限流装饰器 `@rate_limit(max_calls=3, period=60)`，在指定时间窗口（`period` 秒）内允许最多 `max_calls` 次函数调用，超出限制时抛出 `RuntimeError('Rate limit exceeded')`。\n\n## 要求\n\n1. 必须使用 `functools.wraps` 保留原函数元信息\n2. 时间窗口采用**滑动窗口**计算（基于调用时间戳列表过滤过期调用）\n3. 线程安全可不考虑（MVP 单线程场景）\n4. 装饰器返回的 wrapper 函数须接收任意 `*args, **kwargs` 并转发给原函数\n\n## 函数签名\n\n```python\ndef rate_limit(max_calls: int, period: int):\n    def decorator(func):\n        ...\n    return decorator\n```\n\n## 评分规则\n\n- 通过全部 pytest 测试用例即得 100 分\n- 部分通过按通过率线性计分（`score = passed / total * 100`）\n\n## 提示\n\n- 使用闭包维护每个被装饰函数的调用时间戳列表\n- `time.time()` 返回 Unix 时间戳（秒级浮点数）\n- 注意滑动窗口的过滤条件：`now - t < period` 表示时间戳 `t` 仍在窗口内",
+      "code_skeleton": "def rate_limit(max_calls: int, period: int):\n    # 请补全代码\n    pass\n",
+      "reference_solution": "import time\nfrom functools import wraps\n\ndef rate_limit(max_calls: int, period: int):\n    def decorator(func):\n        calls: list[float] = []\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            now = time.time()\n            calls[:] = [t for t in calls if now - t < period]\n            if len(calls) >= max_calls:\n                raise RuntimeError('Rate limit exceeded')\n            calls.append(now)\n            return func(*args, **kwargs)\n        return wrapper\n    return decorator\n",
+      "test_cases": "import pytest\nimport time\nfrom solution import rate_limit\n\ndef test_rate_limit_allows_within_limit():\n    @rate_limit(max_calls=3, period=60)\n    def f():\n        return 'ok'\n    assert f() == 'ok'\n    assert f() == 'ok'\n    assert f() == 'ok'\n\ndef test_rate_limit_blocks_when_exceeded():\n    @rate_limit(max_calls=2, period=60)\n    def f():\n        return 'ok'\n    f()\n    f()\n    with pytest.raises(RuntimeError):\n        f()\n\ndef test_rate_limit_resets_after_period():\n    @rate_limit(max_calls=1, period=1)\n    def f():\n        return 'ok'\n    assert f() == 'ok'\n    with pytest.raises(RuntimeError):\n        f()\n    time.sleep(1.1)\n    assert f() == 'ok'\n\ndef test_rate_limit_preserves_function_metadata():\n    @rate_limit(max_calls=5, period=60)\n    def my_func():\n        \"\"\"My docstring.\"\"\"\n        return 'x'\n    assert my_func.__name__ == 'my_func'\n    assert my_func.__doc__ == 'My docstring.'\n"
+    }
+  ],
+  "learner_profile": {
+    "user_id": "default_user",
+    "current_language": "python",
+    "mastered_nodes": ["python.basics.syntax", "python.basics.closure"],
+    "failed_nodes_queue": ["python.advanced.decorator"],
+    "preferred_learning_style": "practical_first",
+    "implicit_metrics": {
+      "average_time_per_exercise_sec": 420,
+      "first_pass_rate": 0.75
+    }
+  }
+}

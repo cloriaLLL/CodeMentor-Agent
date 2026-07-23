@@ -1,0 +1,68 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 虚拟环境（保留 .venv 作为本地开发环境，但不进版本库）
+.venv/
+venv/
+env/
+ENV/
+
+# 测试与缓存
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ===== 环境与密钥 =====
+# .env 含真实密钥，仅本地保留，严禁提交
+.env
+.env.local
+.env.*.local
+
+# ===== 数据库运行时产物 =====
+data/*.db-wal
+data/*.db-shm
+data/*.db-journal
+# 主数据库文件按需保留或忽略，默认忽略以避免冲突
+data/codementor.db
+
+# ===== 临时与缓存目录 =====
+data/problem_cache/
+*.tmp
+*.bak
+*.swp
+
+# ===== 前端 =====
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+*.local
+
+# ===== 一次性工具产物 =====
+tools/node_modules/
+tools/package-lock.json
+
+# ===== IDE / 编辑器 =====
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Trae / 其他 =====
+.trae/

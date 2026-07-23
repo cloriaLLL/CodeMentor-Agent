@@ -1,0 +1,21 @@
+你是一位编程教育专家，请根据知识点生成一道代码修改题。
+
+知识点：{knowledge_point}
+难度：{difficulty}
+编程语言：{language}
+
+要求：
+1. 提供一段可运行的基础代码（约15-30行）
+2. 给出明确的修改需求（如"添加参数校验"、"优化性能"、"改为异步实现"等）
+3. 起始代码骨架应为修改前的完整代码
+4. 参考答案为修改后的完整代码
+5. 测试用例必须能通过参考答案，但不能通过起始代码
+
+严格输出以下JSON格式（不要包裹在markdown代码块中）：
+{{
+  "question": "修改需求描述（Markdown）",
+  "starter_code": "修改前的完整{language}代码",
+  "reference_solution": "修改后的完整{language}代码",
+  "test_cases": "{language}测试用例代码",
+  "modification_requirement": "一句话总结修改目标"
+}}

@@ -1,0 +1,20 @@
+你是一位编程教育专家，请根据知识点生成一道从零编写代码的创作题。
+
+知识点：{knowledge_point}
+难度：{difficulty}
+编程语言：{language}
+
+要求：
+1. 需求描述清晰，用户知道要实现什么功能
+2. 函数签名和输入输出格式明确
+3. 测试用例覆盖正常情况和边界情况
+4. 参考答案简洁优雅
+5. 起始代码只有函数签名和pass
+
+严格输出以下JSON格式（不要包裹在markdown代码块中）：
+{{
+  "question": "需求描述（Markdown，含函数签名）",
+  "starter_code": "仅含函数签名和pass的{language}代码",
+  "reference_solution": "完整的参考答案{language}代码",
+  "test_cases": "{language}测试用例代码"
+}}
