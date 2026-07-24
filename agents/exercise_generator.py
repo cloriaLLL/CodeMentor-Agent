@@ -189,13 +189,38 @@ class ExerciseGeneratorAgent:
 
         # For true/false questions
         if subtype == "truefalse":
-            options = options or ["正确", "错误"]
-            if correct_answer not in ["正确", "错误", "对", "错", "True", "False", "true", "false"]:
+            if correct_answer in ["对", "True", "true", "T", "正确", "是", "√"]:
                 correct_answer = "正确"
-            if correct_answer in ["对", "True", "true"]:
-                correct_answer = "正确"
-            elif correct_answer in ["错", "False", "false"]:
+            elif correct_answer in ["错", "False", "false", "F", "错误", "否", "×"]:
                 correct_answer = "错误"
+            elif isinstance(options, list) and len(options) >= 2:
+                # LLM 可能返回选择题格式，根据 correct_answer 字母判断对错
+                if len(correct_answer) == 1 and correct_answer.upper() in "AB":
+                    idx = ord(correct_answer.upper()) - ord("A")
+                    opt_text = options[idx].strip().lower()
+                    correct_answer = "正确" if any(k in opt_text for k in ["正确", "对", "true", "是"]) else "错误"
+                else:
+                    correct_answer = "正确"
+            else:
+                correct_answer = "正确"
+            options = ["正确", "错误"]
+
+        # For fill-in-the-blank questions
+        if subtype == "fillblank":
+            # LLM 可能返回选择题格式，需要提取正确答案文本
+            if isinstance(options, list) and len(options) >= 2 and correct_answer:
+                if len(correct_answer) == 1 and correct_answer.upper() in "ABCDEFGH":
+                    idx = ord(correct_answer.upper()) - ord("A")
+                    if idx < len(options):
+                        # 从正确选项中提取答案（去掉 A. 前缀等）
+                        opt_text = options[idx].strip()
+                        for prefix in ["A.", "B.", "C.", "D.", "E.", "A、", "B、", "C、", "D、", "E、", "A ", "B ", "C ", "D ", "E "]:
+                            if opt_text.startswith(prefix):
+                                opt_text = opt_text[len(prefix):].strip()
+                                break
+                        correct_answer = opt_text
+            # 强制 options 为 null（填空题没有选项）
+            options = None
 
         # Fallback for empty question (shouldn't happen, but guard anyway)
         if not question:
