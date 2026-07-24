@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import hljs from 'highlight.js'
-import { useLanguageService, type CompletionItem, type Diagnostic } from '../../hooks/useLanguageService'
+import { useLanguageService, type CompletionItem } from '../../hooks/useLanguageService'
 import { DiagnosticsLayer } from './DiagnosticsLayer'
 import { CompletionPopup } from './CompletionPopup'
 

@@ -48,7 +48,6 @@ export function ExerciseLauncher() {
   const [lastMessageId, setLastMessageId] = useState<string | null>(null)
   const [languages, setLanguages] = useState<LanguageInfo[]>([])
   const [codeLanguages, setCodeLanguages] = useState<LanguageInfo[]>([])
-  const [selectedLang, setSelectedLang] = useState('python')
   const [selectedCodeLang, setSelectedCodeLang] = useState('python')
   const [selectedUnderstandLang, setSelectedUnderstandLang] = useState('python')
   const [langDropdownOpen, setLangDropdownOpen] = useState(false)
@@ -124,8 +123,6 @@ export function ExerciseLauncher() {
     { label: '代码创作', exercise_type: 'creation', knowledge_point: '算法实现', emoji: '💻' },
     { label: '综合项目', exercise_type: 'project', knowledge_point: '项目实战', emoji: '🎯' },
   ]
-
-  const allOptions = [...understandingOptions, ...codeOptions]
 
   const handleLaunch = (opt: QuickOption) => {
     const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')

@@ -37,7 +37,6 @@ interface LanguageServiceState {
 }
 
 const LINT_DEBOUNCE_MS = 150
-const COMPLETE_DEBOUNCE_MS = 200
 const REQUEST_TIMEOUT_MS = 5000
 
 /**

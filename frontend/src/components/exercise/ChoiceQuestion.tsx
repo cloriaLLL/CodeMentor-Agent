@@ -10,7 +10,7 @@ interface ChoiceQuestionProps {
 }
 
 export function ChoiceQuestion({ exercise }: ChoiceQuestionProps) {
-  const { submitAnswer, isSubmitting, result } = useExercise()
+  const { submitAnswer, isSubmitting } = useExercise()
   const [selected, setSelected] = useState<string>('')
   const [multiSelected, setMultiSelected] = useState<Set<string>>(new Set())
   const [fillAnswer, setFillAnswer] = useState('')
@@ -32,12 +32,6 @@ export function ChoiceQuestion({ exercise }: ChoiceQuestionProps) {
     if (isMulti) return multiSelected.has(key) && !correctAnswers.has(key)
     return selected === key && !correctAnswers.has(key)
   }
-  const isUserRight = (key: string) => {
-    if (!submitted || !correctAnswers) return false
-    if (isMulti) return multiSelected.has(key) && correctAnswers.has(key)
-    return selected === key && correctAnswers.has(key)
-  }
-
   useEffect(() => {
     setSelected('')
     setMultiSelected(new Set())
@@ -101,7 +95,6 @@ export function ChoiceQuestion({ exercise }: ChoiceQuestionProps) {
 
   if (subtype === 'truefalse') {
     const correctKey = correctAnswers?.has('T') ? 'T' : correctAnswers?.has('F') ? 'F' : null
-    const userWrongChoice = submitted && correctKey && selected && selected !== correctKey
     return (
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
@@ -179,7 +172,6 @@ export function ChoiceQuestion({ exercise }: ChoiceQuestionProps) {
             const isSelected = isMulti ? multiSelected.has(key) : selected === key
             const correct = isCorrectOption(key)
             const userWrong = isUserWrong(key)
-            const userRight = isUserRight(key)
             const showCorrectBadge = submitted && correct
             const showWrongBadge = userWrong
             return (
